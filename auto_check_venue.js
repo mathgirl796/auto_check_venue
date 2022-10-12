@@ -46,67 +46,66 @@ function todo_list() {
     place_list = document.getElementsByClassName("place-item");
     var todo_list = [];
     for (x of place_list) {
-        if (x.innerText.indexOf("羽毛") >= 0 && x.innerText.indexOf("一校区") >= 0) {
+        if (x.innerText.indexOf(venue) >= 0 && x.innerText.indexOf(campus) >= 0) {
             todo_list.push(x);
         }
     }
     return todo_list;
 }
 
-
-function check_all_place(just_get_interval=false) {
-    i=0;
-    time_shift = 0;
-    inner_interval=500;
-    for(j=0;j<todo_list().length;j++){
-        
-        if (just_get_interval == false) {
-            setTimeout(function() {
-            todo_list()[i].click();
-            }, time_shift);        
-        }
-        time_shift+=inner_interval;
-        
-        setTimeout(function() {
-            ack_btn=document.querySelector("#app > div > div.agree-card-w > div > div.agree-commit > div");
-            ack_btn.click();
-        }, time_shift);
-        time_shift+=inner_interval;
-        
-        setTimeout(function() {
-            check_one_place();
-        }, time_shift);
-        time_shift+=inner_interval;
-        
-        setTimeout(function() {
-            back_btn=document.querySelector("#app > div > div.nav > div.go-back");
-            back_btn.click();
-        }, time_shift);
-        time_shift+=inner_interval;
-    
-        setTimeout(function() {
-            i+=1;
-        }, time_shift);
-        time_shift+=inner_interval;
-        
-        time_shift+=inner_interval;
+i=0;
+time_shift = 0;
+pipeline = [
+    function() {
+    todo_list()[i].click();
+    },
+    function() {
+        ack_btn=document.querySelector("#app > div > div.agree-card-w > div > div.agree-commit > div");
+        ack_btn.click();
+    },
+    function() {
+        check_one_place();
+    },
+    function() {
+        back_btn=document.querySelector("#app > div > div.nav > div.go-back");
+        back_btn.click();
+    },
+    function() {
+        i+=1;
     }
-    return time_shift;
+]
+
+function check_all_place() {
+    for(j=0;j<todo_list().length;j++){
+        for (f of pipeline) {
+            setTimeout(f, time_shift);
+            time_shift+=inner_interval;
+        }
+    }
+}
+
+function global_interval() {
+    ret = 0
+    for (f of pipeline) {
+        ret+=inner_interval;
+    }
+    return ret
 }
 
 function start() {
-    interval = check_all_place();
+    interval = global_interval();
     refresh_time = 1000;
     console.log("interval:",interval);
-    setTimeout(function() {
-        itv = setInterval(function() {
-            setTimeout(refresh, 0);
-            setTimeout(check_all_place, refresh_time);
-        }, interval+refresh_time);
-    }, interval);
+    itv = setInterval(function() {
+        setTimeout(refresh, 0);
+        setTimeout(check_all_place, refresh_time);
+    }, interval+refresh_time);
 }
 
 function stop() {
     clearInterval(itv);
 }
 
+venue="羽毛"
+campus="一校区"
+inner_interval=500;
