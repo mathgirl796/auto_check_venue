@@ -58,12 +58,12 @@ function todo_list() {
 }
 
 function check_all_place() {
-    todo_i=0;
+    todo_i = 0;
     time_shift = 0;
-    for(var j=0;j<todo_list().length;j++){
-        for (var k=0;k<pipeline.length;k++) {
+    for (var j = 0; j < todo_list().length; j++) {
+        for (var k = 0; k < pipeline.length; k++) {
             setTimeout(pipeline[k], time_shift);
-            time_shift+=inner_interval;
+            time_shift += inner_interval;
         }
     }
 }
@@ -74,7 +74,7 @@ function global_interval() {
 
 function start() {
     interval = global_interval();
-    console.log("interval:",interval);
+    console.log("interval:", interval);
     itv = setInterval(function() {
         setTimeout(function() {
             refresh();
@@ -82,40 +82,27 @@ function start() {
         setTimeout(function() {
             check_all_place();
         }, refresh_time);
-    }, interval+refresh_time);
+    }, interval + refresh_time);
 }
 
 function stop() {
     clearInterval(itv);
 }
-
-pipeline = [
-    function() {
-        console.log("pipeline",0);
-        console.log(todo_list()[todo_i]);
-        todo_list()[todo_i].click();
-    },
-    function() {
-        console.log("pipeline",1);
-        ack_btn=document.querySelector("#app > div > div.agree-card-w > div > div.agree-commit > div");
-        ack_btn.click();
-    },
-    function() {
-        console.log("pipeline",2);
-        check_one_place();
-    },
-    function() {
-        console.log("pipeline",3);
-        back_btn=document.querySelector("#app > div > div.nav > div.go-back");
-        back_btn.click();
-    },
-    function() {
-        console.log("pipeline",4);
-        todo_i+=1;
-    }
-];
-
-venue="羽毛";
-campus="二校区";
-inner_interval=200;
-refresh_time=1000;
+pipeline = [function() {
+    console.log(todo_list()[todo_i]);
+    todo_list()[todo_i].click();
+}, function() {
+    ack_btn = document.querySelector("#app > div > div.agree-card-w > div > div.agree-commit > div");
+    ack_btn.click();
+}, function() {
+    check_one_place();
+}, function() {
+    back_btn = document.querySelector("#app > div > div.nav > div.go-back");
+    back_btn.click();
+}, function() {
+    todo_i += 1;
+}];
+venue = "羽毛";
+campus = "一校区";
+inner_interval = 800;
+refresh_time = 1000;
