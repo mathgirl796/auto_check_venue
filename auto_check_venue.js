@@ -68,26 +68,26 @@ function check_all_place() {
     }
 }
 
-function global_interval() {
-    return (pipeline.length + 1) * inner_interval;
-}
-
 function start() {
-    interval = global_interval();
+    interval = inner_interval * pipeline.length * todo_list().length;
     console.log("interval:", interval);
-    itv = setInterval(function() {
-        setTimeout(function() {
-            refresh();
-        }, 0);
-        setTimeout(function() {
-            check_all_place();
-        }, refresh_time);
+
+    setTimeout(function() {
+        refresh();
+    }, 0);
+    setTimeout(function() {
+        check_all_place();
+    }, refresh_time);
+
+    itv = setTimeout(function() {
+        start();
     }, interval + refresh_time);
 }
 
 function stop() {
-    clearInterval(itv);
+    clearTimeout(itv);
 }
+
 pipeline = [function() {
     console.log(todo_list()[todo_i]);
     todo_list()[todo_i].click();
